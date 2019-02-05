@@ -39,7 +39,7 @@ bool BasicUdpStreamer::stopReceiveMode()
 	return false;
 }
 
-int BasicUdpStreamer::send(char *buffer, int size)
+int BasicUdpStreamer::send(const char *buffer, int size)
 {
 	std::lock_guard<std::mutex> guard(m_sendProtectMutex);
 	// TODO

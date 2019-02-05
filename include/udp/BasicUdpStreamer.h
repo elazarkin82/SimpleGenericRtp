@@ -32,7 +32,7 @@ public:
 
 	bool stopReceiveMode();
 
-	int send(char *buffer, int size);
+	int send(const char *buffer, int size);
 
 	int read(char *readBuffer, const int MAX_SIZE, char *sendedFromIP = NULL);
 };
