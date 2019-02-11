@@ -10,42 +10,53 @@ bool s_keepAlive;
 
 void sendLoop()
 {
-	IUdpObject *obj = new BasicUdpStreamer();
+	IComunicationObject *obj = new BasicUdpStreamer();
 
-	const char buffer[] = "test message %d!";
+	const char text_format[] = "test message %d!";
+	char buffer[128];
+	int counter = 0;
 
 	obj->setSendParams("127.0.0.1", 5555);
 
 	while(s_keepAlive)
 	{
+		sprintf(buffer, text_format, counter);
+		fprintf(stdout, "send: %s\n", buffer);
 		obj->send(buffer, sizeof(buffer));
+		usleep(100000);
 	}
 
 	delete obj;
 }
 
-void receiveLoop()
+std::function<void (char *, int, const char *)> callback = [&](char *buffer, int size, const char *fromIP)
 {
-	IUdpObject *obj = new BasicUdpStreamer();
-
-	obj->setReceiveParams(5555);
-
-	delete obj;
-}
+	fprintf(stdout, "receive: %s\n", buffer);
+};
 
 bool testSendReceiveBlockRead()
 {
-	if((s_keepAlive=true))
+	s_keepAlive=true;
+
+	if(s_keepAlive)
 	{
+		IComunicationObject *obj = new BasicUdpStreamer();
+
 		std::thread t1(sendLoop);
-		std::thread t2(receiveLoop);
+
+		obj->setReceiveParams(5555);
+
+		obj->startReceiveMode(&callback);
 
 		sleep(5);
 
 		s_keepAlive = false;
 
 		if(t1.joinable()) t1.join();
-		if(t2.joinable()) t2.join();
+
+		obj->stopReceiveMode();
+
+		delete obj;
 	}
 
 	return true;

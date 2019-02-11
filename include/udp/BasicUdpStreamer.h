@@ -8,15 +8,40 @@
 #ifndef INCLUDE_UDP_BASICUDPSTREAMER_H_
 #define INCLUDE_UDP_BASICUDPSTREAMER_H_
 
-#include "IUdpObject.h"
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <sys/socket.h>
+#include <sys/types.h>
 
 #include <mutex>
 
-class BasicUdpStreamer: public IUdpObject
+#include "IComunicationObject.h"
+
+class BasicUdpStreamer: public IComunicationObject
 {
 private:
 
-	std::mutex m_sendProtectMutex;
+	char m_readBuffer[65536];
+
+	std::mutex m_sendProtectMutex, m_receiveProtectMutex;
+
+	int m_receiveSocketFd, m_sendSocketFd;
+
+	struct sockaddr_in m_send_sockaddr, m_last_receive_sockaddr;
+
+protected:
+
+	int proccessRead(UdpReceiveCallback *callback);
+
+	bool isExternStartReceiveValiable();
+
+	bool initReceiveMode(int port);
+
+	bool destroyReceiveMode();
+
+	bool initSendMode(const char *ip, int port);
+
+	bool destroySendMode();
 
 public:
 
@@ -24,17 +49,7 @@ public:
 
 	virtual ~BasicUdpStreamer();
 
-	void setSendParams(const char *ip, int port);
-
-	void setReceiveParams(int port);
-
-	bool startReceiveMode();
-
-	bool stopReceiveMode();
-
 	int send(const char *buffer, int size);
-
-	int read(char *readBuffer, const int MAX_SIZE, char *sendedFromIP = NULL);
 };
 
 
