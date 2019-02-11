@@ -20,9 +20,9 @@ void sendLoop()
 
 	while(s_keepAlive)
 	{
-		sprintf(buffer, text_format, counter);
+		sprintf(buffer, text_format, counter++);
 		fprintf(stdout, "send: %s\n", buffer);
-		obj->send(buffer, sizeof(buffer));
+		obj->send(buffer, sizeof(text_format));
 		usleep(100000);
 	}
 

@@ -23,13 +23,15 @@ IComunicationObject::IComunicationObject()
 
 IComunicationObject::~IComunicationObject()
 {
-
+	stopReceiveMode();
 }
 
+// TODO change it to initSendMode(const char *ip, int port) and replace virtual initSendMode to some other name
 void IComunicationObject::setSendParams(const char *ip, int port)
 {
 	if(ip == NULL)
 	{
+		destroySendMode();
 		memset(m_sendIp, 0, sizeof(m_sendIp));
 		m_sendPort = 0;
 	}
@@ -37,6 +39,11 @@ void IComunicationObject::setSendParams(const char *ip, int port)
 	{
 		sprintf(m_sendIp, "%s", ip);
 		m_sendPort = port;
+
+		if(initSendMode(m_sendIp, port))
+		{
+			fprintf(stdout, "send mode ready!\n");
+		}
 	}
 }
 
@@ -66,10 +73,13 @@ bool IComunicationObject::internalStartReceiveMode(UdpReceiveCallback *callback)
 
 	if(m_receiveThread == NULL)
 	{
-		m_receiveKeepAlive = true;
-		m_receiveThread = new std::thread(&IComunicationObject::receiveThreadLoop, this, callback);
+		if(initReceiveMode(m_receivePort))
+		{
+			m_receiveKeepAlive = true;
+			m_receiveThread = new std::thread(&IComunicationObject::receiveThreadLoop, this, callback);
 
-		return true;
+			return true;
+		}
 	}
 
 	return false;

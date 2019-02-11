@@ -15,7 +15,8 @@ BasicUdpStreamer::BasicUdpStreamer()
 
 BasicUdpStreamer::~BasicUdpStreamer()
 {
-
+	destroySendMode();
+	destroyReceiveMode();
 }
 
 bool BasicUdpStreamer::isExternStartReceiveValiable()
@@ -27,6 +28,8 @@ bool BasicUdpStreamer::initReceiveMode(int port)
 {
 	bool ret = false;
 
+	fprintf(stdout, "initReceiveMode %d started\n", port);
+
 	if(m_receiveSocketFd > 0) destroyReceiveMode();
 
 	m_receiveProtectMutex.lock();
@@ -35,6 +38,21 @@ bool BasicUdpStreamer::initReceiveMode(int port)
 	{
 		struct timeval tv;
 
+		m_last_receive_sockaddr.sin_family = AF_INET;
+		m_last_receive_sockaddr.sin_port = htons(port);
+		m_last_receive_sockaddr.sin_addr.s_addr = INADDR_ANY;
+
+		if (bind(m_receiveSocketFd, (const sockaddr *)&m_last_receive_sockaddr, sizeof(m_last_receive_sockaddr)) != -1)
+		{
+			ret = true;
+		}
+		else
+		{
+			fprintf(stderr, "receive socket bind failed\n");
+			close(m_receiveSocketFd);
+			m_receiveSocketFd = -1;
+		}
+
 		tv.tv_sec = 0;
 		tv.tv_usec = 100000;
 		setsockopt(m_receiveSocketFd, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof tv);
@@ -42,13 +60,22 @@ bool BasicUdpStreamer::initReceiveMode(int port)
 		ret = true;
 	}
 
-	m_receiveProtectMutex.lock();
+	m_receiveProtectMutex.unlock();
+
+	fprintf(stdout, "initReceiveMode %d endted %s\n", port, ret ? "success":"fail");
+
 	return ret;
 }
 
 bool BasicUdpStreamer::destroyReceiveMode()
 {
-	// TODO
+	std::lock_guard<std::mutex> guard(m_receiveProtectMutex);
+
+	if(m_receiveSocketFd > 0)
+	{
+		close(m_receiveSocketFd);
+		m_receiveSocketFd = -1;
+	}
 	return false;
 }
 
@@ -65,17 +92,6 @@ bool BasicUdpStreamer::initSendMode(const char *ip, int port)
 		m_send_sockaddr.sin_family = AF_INET;
 		m_send_sockaddr.sin_port = htons(port);
 		m_send_sockaddr.sin_addr.s_addr = inet_addr(ip);
-
-		if (bind(m_sendSocketFd, (const sockaddr *)&m_send_sockaddr, sizeof(m_send_sockaddr)) != -1)
-		{
-			ret = true;
-		}
-		else
-		{
-			fprintf(stderr, "socket bind failed\n");
-			close(m_sendSocketFd);
-			m_sendSocketFd = -1;
-		}
 	}
 	else
 	{
@@ -97,7 +113,7 @@ bool BasicUdpStreamer::destroySendMode()
 		m_sendSocketFd = -1;
 	}
 
-	return false;
+	return true;
 }
 
 int BasicUdpStreamer::send(const char *buffer, int size)
@@ -120,7 +136,13 @@ int BasicUdpStreamer::proccessRead(UdpReceiveCallback *callback)
 
 	if(m_receiveSocketFd)
 	{
-		return recvfrom(m_receiveSocketFd, m_readBuffer, sizeof(m_readBuffer), 0, (sockaddr *)&m_last_receive_sockaddr, &len);
+		int ret = recvfrom(m_receiveSocketFd, m_readBuffer, sizeof(m_readBuffer), 0, (sockaddr *)&m_last_receive_sockaddr, &len);
+
+		fprintf(stdout, "proccessRead: %d bytes\n", ret);
+
+		if(ret > 0) callback[0](m_readBuffer, ret, "TODO_ADD_IP");
+
+		return ret;
 	}
 
 	return 0;
