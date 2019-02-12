@@ -56,6 +56,7 @@ void IComunicationObject::receiveThreadLoop(UdpReceiveCallback *callback)
 {
 	initReceiveMode(m_receivePort);
 
+	fprintf(stdout, "start receiveThreadLoop!\n");
 	/*
 	 * proccessRead is block read so not need sleep between read to read
 	 */
@@ -63,6 +64,8 @@ void IComunicationObject::receiveThreadLoop(UdpReceiveCallback *callback)
 	{
 		proccessRead(callback);
 	}
+
+	fprintf(stdout, "finish receiveThreadLoop!\n");
 
 	destroyReceiveMode();
 }
@@ -101,6 +104,8 @@ bool IComunicationObject::stopReceiveMode()
 
 	if(m_receiveThread != NULL)
 	{
+		m_receiveKeepAlive = false;
+
 		if(m_receiveThread->joinable())
 		{
 			m_receiveThread->join();

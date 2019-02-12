@@ -48,7 +48,7 @@ bool testSendReceiveBlockRead()
 
 		obj->startReceiveMode(&callback);
 
-		sleep(5);
+		sleep(2);
 
 		s_keepAlive = false;
 
@@ -64,7 +64,7 @@ bool testSendReceiveBlockRead()
 
 int main(int argc, char **argv)
 {
-	for(int i = 0; i < 10; i++)
+	for(int i = 0; i < 1000; i++)
 	{
 		fprintf(stdout, "testSendReceiveBlockRead num %d %s!\n", i, (testSendReceiveBlockRead() ? "success":"fail"));
 	}
