@@ -5,8 +5,8 @@
  *      Author: elazarkin
  */
 
-#ifndef INCLUDE_UDP_BASICUDPSTREAMER_H_
-#define INCLUDE_UDP_BASICUDPSTREAMER_H_
+#ifndef INCLUDE_STREAMERS_BASICUDPSTREAMER_H_
+#define INCLUDE_STREAMERS_BASICUDPSTREAMER_H_
 
 #include <arpa/inet.h>
 #include <unistd.h>
@@ -15,7 +15,7 @@
 
 #include <mutex>
 
-#include "IComunicationObject.h"
+#include "../streamers/IComunicationObject.h"
 
 class BasicUdpStreamer: public IComunicationObject
 {
@@ -54,4 +54,4 @@ public:
 
 
 
-#endif /* INCLUDE_UDP_BASICUDPSTREAMER_H_ */
+#endif /* INCLUDE_STREAMERS_BASICUDPSTREAMER_H_ */

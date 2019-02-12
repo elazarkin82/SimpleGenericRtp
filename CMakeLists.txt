@@ -9,6 +9,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 set(lib_src
 	${CMAKE_CURRENT_SOURCE_DIR}/src/BasicUdpStreamer.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/IComunicationObject.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/BasicRtpStreamer.cpp
 )
 
 add_library(GenericRtpLib STATIC ${lib_src})

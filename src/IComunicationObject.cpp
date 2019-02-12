@@ -5,8 +5,7 @@
  *      Author: elazarkin
  */
 
-#include <udp/IComunicationObject.h>
-
+#include <streamers/IComunicationObject.h>
 #include <unistd.h>
 
 IComunicationObject::IComunicationObject()
@@ -56,7 +55,6 @@ void IComunicationObject::receiveThreadLoop(UdpReceiveCallback *callback)
 {
 	initReceiveMode(m_receivePort);
 
-	fprintf(stdout, "start receiveThreadLoop!\n");
 	/*
 	 * proccessRead is block read so not need sleep between read to read
 	 */
@@ -64,8 +62,6 @@ void IComunicationObject::receiveThreadLoop(UdpReceiveCallback *callback)
 	{
 		proccessRead(callback);
 	}
-
-	fprintf(stdout, "finish receiveThreadLoop!\n");
 
 	destroyReceiveMode();
 }

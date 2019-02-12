@@ -5,8 +5,8 @@
  *      Author: elazarkin
  */
 
-#ifndef INCLUDE_UDP_ICOMUNICATIONOBJECT_H_
-#define INCLUDE_UDP_ICOMUNICATIONOBJECT_H_
+#ifndef INCLUDE_STREAMERS_ICOMUNICATIONOBJECT_H_
+#define INCLUDE_STREAMERS_ICOMUNICATIONOBJECT_H_
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -74,4 +74,4 @@ public:
 };
 
 
-#endif /* INCLUDE_UDP_ICOMUNICATIONOBJECT_H_ */
+#endif /* INCLUDE_STREAMERS_ICOMUNICATIONOBJECT_H_ */

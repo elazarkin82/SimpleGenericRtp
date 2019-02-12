@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <udp/BasicUdpStreamer.h>
-
+#include <streamers/BasicUdpStreamer.h>
 #include <thread>
 
 #include <unistd.h>
@@ -64,7 +63,7 @@ bool testSendReceiveBlockRead()
 
 int main(int argc, char **argv)
 {
-	for(int i = 0; i < 1000; i++)
+	for(int i = 0; i < 10; i++)
 	{
 		fprintf(stdout, "testSendReceiveBlockRead num %d %s!\n", i, (testSendReceiveBlockRead() ? "success":"fail"));
 	}

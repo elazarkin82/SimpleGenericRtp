@@ -5,7 +5,7 @@
  *      Author: elazarkin
  */
 
-#include <udp/BasicUdpStreamer.h>
+#include <streamers/BasicUdpStreamer.h>
 
 BasicUdpStreamer::BasicUdpStreamer()
 {
@@ -27,8 +27,6 @@ bool BasicUdpStreamer::isExternStartReceiveValiable()
 bool BasicUdpStreamer::initReceiveMode(int port)
 {
 	bool ret = false;
-
-	fprintf(stdout, "initReceiveMode %d started\n", port);
 
 	if(m_receiveSocketFd > 0) destroyReceiveMode();
 
@@ -61,8 +59,6 @@ bool BasicUdpStreamer::initReceiveMode(int port)
 	}
 
 	m_receiveProtectMutex.unlock();
-
-	fprintf(stdout, "initReceiveMode %d endted %s\n", port, ret ? "success":"fail");
 
 	return ret;
 }
